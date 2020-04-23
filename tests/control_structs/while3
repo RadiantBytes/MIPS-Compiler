@@ -1,0 +1,11 @@
+int i;
+int d;
+i = 0;
+d = 0;
+while(i != 10){
+i = i + 1;
+print(1);
+}
+print(i);
+print(d);
+

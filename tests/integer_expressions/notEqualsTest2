@@ -1,0 +1,6 @@
+int num4;
+int num5;
+num4 = 3 != 3;
+num5 = 3 != 4;
+print num4;
+print num5;

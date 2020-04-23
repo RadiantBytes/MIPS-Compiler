@@ -1,0 +1,5 @@
+int i;
+i = 1;
+print(i);
+printspaces(1);
+print(1);

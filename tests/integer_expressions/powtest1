@@ -1,0 +1,7 @@
+int i;
+int d;
+int j;
+i = 2;
+d = 3;
+j = pow(i,d);
+print(i, d, j);

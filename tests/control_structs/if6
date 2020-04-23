@@ -1,0 +1,18 @@
+int a;
+int b;
+int c;
+a = 1;
+b = 2;
+c = 3;
+if(a < b){
+print(1);
+}
+if(c < a){
+print(0);
+}
+if(b > a){
+print(1);
+}
+if(a > c){
+print(0);
+}

@@ -1,0 +1,8 @@
+1. WriteSeq	
+2. 	.text
+           ^
+Illegal Character in lex
+
+
+                  ^
+2. Illegal Character in YACC

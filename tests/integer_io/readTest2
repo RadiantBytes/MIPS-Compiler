@@ -1,0 +1,4 @@
+int var;
+var = 4;
+read(var);
+print(var);

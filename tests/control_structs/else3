@@ -1,0 +1,11 @@
+if(100-50==5*10){
+print(1);
+} else {
+print(0);
+}
+
+if(100/2==20){
+print(0);
+} else {
+print(1);
+}

@@ -1,0 +1,13 @@
+int x;
+int y;
+int z;
+int a;
+int b;
+int c;
+read(x, y, z, a, b, c);
+print(x);
+print(y);
+print(z);
+print(a);
+print(b);
+print(c);

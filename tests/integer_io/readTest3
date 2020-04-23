@@ -1,0 +1,5 @@
+int y;
+int x;
+read(x,y);
+print x;
+print y;

@@ -1,0 +1,9 @@
+1. int num1;
+2. int num2;
+3. num1 = 10 - 5;
+             ^
+Illegal Character in lex
+
+
+                ^
+3. Illegal Character in YACC
