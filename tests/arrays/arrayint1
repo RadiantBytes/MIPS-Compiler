@@ -1,0 +1,4 @@
+int num1;
+num1 = 2;
+Int newArray[11];
+|newArray[num1] = 4;

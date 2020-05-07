@@ -43,3 +43,6 @@ void writeError(char * message);
 int getCurrentLineNum();
 
 int getCurrentColumnNum();
+
+char * getBuffer();
+// Return the current char * held in the lineBuffer

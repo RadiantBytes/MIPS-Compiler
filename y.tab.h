@@ -48,42 +48,58 @@ extern int yydebug;
     Ident = 258,
     IntLit = 259,
     Int = 260,
-    Write = 261,
-    IF = 262,
-    EQ = 263,
-    NOTEQ = 264,
-    GTE = 265,
-    LTE = 266,
-    AND = 267,
-    OR = 268,
-    WriteLn = 269,
-    Read = 270,
-    ReadVal = 271,
-    PrintSpaces = 272,
-    While = 273,
-    ELSE = 274,
-    POW = 275
+    Void = 261,
+    Bool = 262,
+    ArrInt = 263,
+    AInt = 264,
+    Write = 265,
+    IF = 266,
+    EQ = 267,
+    NOTEQ = 268,
+    GTE = 269,
+    LTE = 270,
+    AND = 271,
+    OR = 272,
+    WriteLn = 273,
+    Read = 274,
+    ReadVal = 275,
+    PrintSpaces = 276,
+    While = 277,
+    For = 278,
+    ELSE = 279,
+    POW = 280,
+    ArrAssign = 281,
+    True = 282,
+    False = 283
   };
 #endif
 /* Tokens.  */
 #define Ident 258
 #define IntLit 259
 #define Int 260
-#define Write 261
-#define IF 262
-#define EQ 263
-#define NOTEQ 264
-#define GTE 265
-#define LTE 266
-#define AND 267
-#define OR 268
-#define WriteLn 269
-#define Read 270
-#define ReadVal 271
-#define PrintSpaces 272
-#define While 273
-#define ELSE 274
-#define POW 275
+#define Void 261
+#define Bool 262
+#define ArrInt 263
+#define AInt 264
+#define Write 265
+#define IF 266
+#define EQ 267
+#define NOTEQ 268
+#define GTE 269
+#define LTE 270
+#define AND 271
+#define OR 272
+#define WriteLn 273
+#define Read 274
+#define ReadVal 275
+#define PrintSpaces 276
+#define While 277
+#define For 278
+#define ELSE 279
+#define POW 280
+#define ArrAssign 281
+#define True 282
+#define False 283
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -99,7 +115,7 @@ union YYSTYPE
   struct BExprRes * BExprRes;
   struct Id *Id;
 
-#line 103 "y.tab.h" /* yacc.c:1909  */
+#line 119 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

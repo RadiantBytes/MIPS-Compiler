@@ -15,13 +15,14 @@
 
 extern SymTab *table;
 string_node *head;
+string_node *array_head;
 
 /* doIf jump-point seems to add ahead by one between doRelationOp and doIf,
  Use a buffer to remember the correct if jump-point name */
 char ifBuffer[8];
 char elseBuffer[8];
 
-char *startLoop[8];
+char startLoop[8];
 
 int ifBoolBuffer;
 
@@ -32,12 +33,18 @@ int boolDestReg;
 struct ExprRes *res1Buffer;
 struct ExprRes *res2Buffer;
 
+int tempReg;
+
 
 /* Semantics support routines */
 
 void initiateLists() {
-	printf("in initiateLists...\n");
+
+	// Initiates list of string declarations
 	head = NULL;
+	// Initiates list of array declarations
+	array_head = NULL;
+
 	return;
 }
 struct ExprRes *  doIntLit(char * digits)  {
@@ -45,7 +52,6 @@ struct ExprRes *  doIntLit(char * digits)  {
 	struct ExprRes *res;
 
 	res = (struct ExprRes *) malloc(sizeof(struct ExprRes));
-	res->Reg = AvailTmpReg();
 	res->Reg = AvailTmpReg();
 	res->Instrs = GenInstr(NULL,"li",TmpRegName(res->Reg),digits,NULL);
 
@@ -65,6 +71,124 @@ struct ExprRes *  doRval(char * name)  {
 	res->Instrs = GenInstr(NULL,"lw",TmpRegName(res->Reg),name,NULL);
 
 	return res;
+}
+
+void doInitializeArray() {
+
+	char * temp;
+	temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	strcpy(temp, getBuffer());
+
+	// Fetch array variable name and size from getBuffer()
+	char * arrName;
+	arrName = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	int openBracketIndex;
+	int closeBracketIndex;
+	int nameStartIndex;
+
+	char c;
+	int i = 0;
+	for(i; i < strlen(temp); i++) {
+		c = temp[i];
+
+		if (c == ' ') {
+			nameStartIndex = i+1;
+		}
+		else if (c == '[') {
+			openBracketIndex = i;
+		}
+		else if (c == ']') {
+			closeBracketIndex = i;
+		}
+
+	}
+
+	// Grab name of array and size from the declaration line of code
+	strncpy(arrName, (temp+nameStartIndex), openBracketIndex - nameStartIndex);
+
+	char * tempSize;
+	tempSize = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	strncpy(tempSize, (temp+openBracketIndex+1), closeBracketIndex - openBracketIndex-1);
+
+	// Add array name and array size to a linked list node
+	string_node *newNode;
+
+	newNode = (string_node*)malloc(sizeof(string_node));
+
+	// Array Name
+	strcpy(newNode->string_name, arrName);
+	// Array Size
+	strcpy(newNode->string_contents, tempSize);
+
+	// Add this newNode to the array list
+	newNode->next = NULL;
+	array_head = add_node(array_head, newNode);
+}
+
+struct InstrSeq *  doIndexAssign(struct ExprRes * Res2) {
+
+		char * temp;
+		temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+		strcpy(temp, getBuffer());
+
+		struct InstrSeq *code;
+
+		// if (!findName(table, name)) {
+		// 	writeIndicator(getCurrentColumnNum());
+		// 	writeMessage("Undeclared variable");
+		// }
+
+		// Fetch array variable name and size from getBuffer()
+		char * arrName;
+		arrName = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+		int openBracketIndex;
+		int closeBracketIndex;
+		int nameStartIndex;
+
+		char c;
+		int i = 0;
+		for(i; i < strlen(temp); i++) {
+			c = temp[i];
+
+
+		  if (c == '[') {
+				openBracketIndex = i;
+			}
+
+
+		}
+
+		// Grab name of array and size from the declaration line of code
+		strncpy(arrName, temp+1, openBracketIndex-1);
+
+
+		int reg;
+		reg = AvailTmpReg();
+
+		code = Res2->Instrs;
+
+		AppendSeq(code,GenInstr(NULL,"la",TmpRegName(reg),arrName,NULL));
+		AppendSeq(code,GenInstr(NULL,"sll",TmpRegName(tempReg),TmpRegName(tempReg),"2"));
+		AppendSeq(code,GenInstr(NULL,"add",TmpRegName(reg),TmpRegName(reg),TmpRegName(tempReg)));
+
+		// string representation of how to access array index in MIPS
+		char *arrTemp;
+		arrTemp = (char*)malloc(7 * sizeof(char));
+		strcat(arrTemp, "0(");
+		strcat(arrTemp, TmpRegName(reg));
+		strcat(arrTemp, ")");
+
+		AppendSeq(code,GenInstr(NULL,"sw",TmpRegName(Res2->Reg),arrTemp,NULL));
+
+		//ReleaseTmpReg(Expr->Reg);
+
+		return code;
+
 }
 
 struct ExprRes *  doAdd(struct ExprRes * Res1, struct ExprRes * Res2)  {
@@ -182,7 +306,8 @@ struct ExprRes *  doExponentiation(struct ExprRes * Res1, struct ExprRes * Res2)
 	char *startExp = GenLabel();
 	char *endExp = GenLabel();
 
-	// Loop to complete exponentiation
+	// Loop to complete exponentiationextern struct InstrSeq * doWhileLoop(struct BExprRes * bRes, struct InstrSeq * seq);
+
 	AppendSeq(Res1->Instrs,Res2->Instrs);
 	AppendSeq(Res1->Instrs, GenInstr(NULL, "add",TmpRegName(reg), TmpRegName(Res1->Reg), "$zero"));
 
@@ -388,7 +513,6 @@ struct InstrSeq * doPrintLn() {
 }
 
 struct InstrSeq * doPrintSpaces(struct ExprRes * Expr) {
-	printf("In printspaces");
 
 	 string_node *newNode;
 
@@ -439,12 +563,65 @@ struct InstrSeq * doAssign(char *name, struct ExprRes * Expr) {
 
 	AppendSeq(code,GenInstr(NULL,"sw",TmpRegName(Expr->Reg), name,NULL));
 
+	res1Buffer = Expr;
+	tempReg = Expr->Reg;
+
 	ReleaseTmpReg(Expr->Reg);
 	free(Expr);
 
 	return code;
 }
 
+struct InstrSeq * doBoolAssign(char boolVal) {
+
+	struct ExprRes *Expr = malloc(sizeof(struct ExprRes));
+
+	char * temp;
+	temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	strcpy(temp, getBuffer());
+
+	struct InstrSeq *code;
+
+	// if (!findName(table, name)) {
+	// 	writeIndicator(getCurrentColumnNum());
+	// 	writeMessage("Undeclared variable");
+	// }
+
+	// Fetch array variable name and size from getBuffer()
+	char * varName;
+	varName = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	int equalsIndex;
+	int closeBracketIndex;
+	int nameStartIndex;
+
+	char c;
+	int i = 0;
+	for(i; i < strlen(temp); i++) {
+		c = temp[i];
+
+
+		if (c == '=') {
+			equalsIndex = i;
+		}
+
+
+	}
+
+	// Grab name of array and size from the declaration line of code
+	strncpy(varName, temp+1, equalsIndex-1);
+
+	printf("varName is %s. ", varName);
+	printf("boolVal is %c", boolVal);
+
+	AppendSeq(code,GenInstr(NULL,"sw",TmpRegName(Expr->Reg),varName,NULL));
+
+	ReleaseTmpReg(Expr->Reg);
+	free(Expr);
+
+	return code;
+}
 
 extern struct InstrSeq * doIf(struct BExprRes * bRes, struct InstrSeq * seq) {
 	struct InstrSeq * seq2;
@@ -515,6 +692,57 @@ struct InstrSeq * doWhileLoop(struct BExprRes * bRes, struct InstrSeq * seq) {
 
 }
 
+struct InstrSeq * doForLoop() {
+	printf("Test");
+}
+
+struct InstrSeq * doFunction(struct InstrSeq * ident, struct InstrSeq * params, struct InstrSeq * stmtSeq, char *functName) {
+	printf("In doFunction");
+
+	printf("\n%s.", functName);
+
+
+	return NULL;
+}
+
+struct InstrSeq * doDeclFunct(struct InstrSeq * seq, struct InstrSeq * seq2) {
+
+	char * temp;
+	temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	strcpy(temp, getBuffer());
+
+	char * functName;
+	functName = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	int openParensIndex;
+	int nameStartIndex;
+
+	char c;
+	int i = 0;
+	for(i; i < strlen(temp); i++) {
+		c = temp[i];
+
+
+		if (c == '(') {
+			openParensIndex = i;
+		}
+		if (c == ' ') {
+			nameStartIndex = i;
+		}
+
+
+	}
+
+	// Grab name of array and size from the declaration line of code
+	strncpy(functName, temp+nameStartIndex+1, openParensIndex-6);
+
+
+	AppendSeq(seq2, GenInstr(functName, NULL, NULL, NULL, NULL));
+
+	return seq2;
+}
+
 /*
 
    extern struct InstrSeq * doIf(struct ExprRes *res1, struct ExprRes *res2, struct InstrSeq * seq) {
@@ -543,10 +771,40 @@ Finish(struct InstrSeq *Code)
 
 	code = GenInstr(NULL,".data",NULL,NULL,NULL);
 
+	/*
+	 * Add information to .data section from node lists
+	 */
+
+	// Add array .space info to .data section in MIPS
+	// Concurrently free the string_nodes after AppendSeq
+	string_node *prev = array_head;
+	string_node *cur = array_head;
+	char *sizeTemp;
+
+	while (cur) {
+		prev = cur;
+		cur = prev->next;
+
+		// Put double-quotes around string_contents
+		sizeTemp = malloc(strlen(prev->string_contents) + 2);
+
+		int arrSize = atoi(prev->string_contents);
+		arrSize = arrSize * 4;
+
+		sprintf(sizeTemp, "%d", arrSize);
+
+		// Append string declaration
+		AppendSeq(code, GenInstr(prev->string_name,".space",sizeTemp,NULL,NULL));
+
+		free(prev);
+	}
+
+
 	// Add string(s) to .data section in MIPS
 	// Concurrently free the string_nodes after AppendSeq
-	string_node *prev = head;
-	string_node *cur = head;
+	prev = head;
+	cur = head;
+
 	char *temp;
 	while (cur) {
 		prev = cur;

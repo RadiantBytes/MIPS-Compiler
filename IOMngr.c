@@ -202,6 +202,9 @@ int getCurrentColumnNum() {
 	return currCol;
 }
 
+char * getBuffer() {
+	return lineBuffer;
+}
 int setBuffer(int lineNum) {
 	if (sourcefp == NULL) {
 		perror("ERROR: The source file is closed, the buffer could not be set in IOMnger");

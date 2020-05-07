@@ -38,7 +38,7 @@ struct string_node *add_node(struct string_node *head, struct string_node *node)
 		}
 	}
   /* DEBUG */
-	printf("\nAdded %s : %s to string_list\n", node->string_name, node->string_contents);
+	//printf("\nAdded %s : %s to string_list\n", node->string_name, node->string_contents);
 	return head;
 }
 

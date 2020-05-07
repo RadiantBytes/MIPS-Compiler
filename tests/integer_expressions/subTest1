@@ -2,6 +2,6 @@ int num1;
 int num2;
 num1 = 10 - 5;
 num2 = 15 * 2 - num1;
-print num1;
-print num2;
+print(num1);
+print(num2);
 

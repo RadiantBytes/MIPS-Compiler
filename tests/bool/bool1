@@ -1,0 +1,3 @@
+Bool i;
+#i = true;
+#i = false;

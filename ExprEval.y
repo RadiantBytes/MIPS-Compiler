@@ -34,16 +34,25 @@ extern SymTab *table;
 %type <ExprRes> Expr
 %type <InstrSeq> StmtSeq
 %type <InstrSeq> Stmt
+%type <InstrSeq> AssignStmt
 %type <InstrSeq> ReadVars
 %type <InstrSeq> RVar
 %type <InstrSeq> ExprVal
 %type <BExprRes> BExpr
 %type <InstrSeq> ExprList
+%type <InstrSeq> Type
+%type <InstrSeq> BoolVal
+%type <InstrSeq> ParameterList
+%type <InstrSeq> Parameter
 
 
 %token Ident
 %token IntLit
 %token Int
+%token Void
+%token Bool
+%token ArrInt
+%token AInt
 %token Write
 %token IF
 %token EQ
@@ -57,8 +66,12 @@ extern SymTab *table;
 %token ReadVal
 %token PrintSpaces
 %token While
+%token For
 %token ELSE
 %token POW
+%token ArrAssign
+%token True
+%token False
 
 
 %%
@@ -66,18 +79,28 @@ extern SymTab *table;
 Prog            :	     Declarations StmtSeq					        	{Finish($2); } ;
 Declarations    :	     Dec Declarations						         	  { };
 Declarations  	:		                                          { };
-Dec		         	:	     Int Ident                              {enterName(table, yytext); }';'	{};
+Dec		         	:	     Type Id                                {enterName(table, yytext);}';'	{};
 StmtSeq     		:	     Stmt StmtSeq							            	{$$ = AppendSeq($1, $2); } ;
 StmtSeq	      	:		 	                                        {$$ = NULL;} ;
+Stmt            :      ArrInt Id '[' IntLit ']' ';'           {doInitializeArray();};
 Stmt	       		:	     Write '(' ExprList ')' ';'							{$$ = $3; };
 Stmt            :      WriteLn ';'                            {$$ = doPrintLn(); } ;
 Stmt            :      PrintSpaces '(' Expr ')' ';'           {$$ = doPrintSpaces($3);};
 Stmt            :      Read '(' ReadVars ')' ';'              {$$ = $3;};
-Stmt		      	:	     Id '=' Expr ';'							        	{$$ = doAssign($1, $3);} ;
 Stmt	       		:	     IF '(' BExpr ')' '{' StmtSeq '}' 			{$$ = doIf($3, $6);};
-Stmt	       		:	     IF '(' BExpr ')' '{' StmtSeq '}' ELSE '{' StmtSeq '}' 	 {$$ = doIfElse($3, $6, $10);};
-Stmt            :      While '(' BExpr ')' '{' StmtSeq '}'    {$$ = doWhileLoop($3, $6);};
-ReadVars        :      RVar ',' ReadVars                      {$$ = AppendSeq($1, $3); };
+Stmt	       		:	     IF '(' BExpr ')' '{' StmtSeq '}' ELSE '{' StmtSeq '}' 	          {$$ = doIfElse($3, $6, $10);};
+Stmt            :      While '(' BExpr ')' '{' StmtSeq '}'                              {$$ = doWhileLoop($3, $6);};
+Stmt            :      For '(' AssignStmt ';' BExpr ';' Stmt ')' '{' StmtSeq '}'        {$$ = doForLoop();};
+Stmt            :      '_'Type Id '(' ParameterList ')'                  {$$ = doDeclFunct($2, $5);};
+Stmt            :      AssignStmt                             {$$ = $1;};
+AssignStmt      :      Ident '=' Expr ';'							        {$$ = doAssign($1, $3);};
+AssignStmt      :      '#'Id '=' BoolVal ';'                  {};
+AssignStmt      :      '|'Id '['Expr']' '=' Expr ';'          {$$ = doIndexAssign($7);};
+ParameterList   :      Parameter ',' ParameterList            {$$ = AppendSeq($1, $3);};
+ParameterList   :      Parameter                              {$$ = $1;};
+ParameterList   :                                             {$$ = NULL;};
+Parameter       :      Ident                                  {enterName(table, yytext);}	{};
+ReadVars        :      RVar ',' ReadVars                      {$$ = AppendSeq($1, $3);};
 ReadVars        :      RVar                                   {$$ = $1;};
 RVar            :      Id                                     {$$ = doReadIn($1);};
 ExprList        :      ExprVal ',' ExprList                   {$$ = AppendSeq($1, $3);} ;
@@ -91,8 +114,8 @@ Term	         	:	     Term '/' Factor							        	{$$ = doDiv($1, $3); } ;
 Term	         	:	     Term '%' Factor							        	{$$ = doMod($1, $3); } ;
 Term            :      POW '(' Term ',' Expr ')'              {$$ = doExponentiation($3, $5);};
 Term	         	:      Factor								                	{$$ = $1; } ;
-BExpr           :      Term '>' Factor                        {$$ = doRelationalOp($1, $3, ">"); } ;
-BExpr           :      Term '<' Factor                        {$$ = doRelationalOp($1, $3, "<"); } ;
+BExpr           :      Expr '>' Expr                          {$$ = doRelationalOp($1, $3, ">"); } ;
+BExpr           :      Expr '<' Expr                          {$$ = doRelationalOp($1, $3, "<"); } ;
 BExpr           :      Expr EQ Expr                           {$$ = doRelationalOp($1, $3, "=="); } ;
 BExpr           :      Expr NOTEQ Expr                        {$$ = doRelationalOp($1, $3, "!="); } ;
 BExpr           :      Expr GTE Expr                          {$$ = doRelationalOp($1, $3, ">="); } ;
@@ -104,6 +127,11 @@ Factor          :      '(' Expr ')'                           {$$ = $2;}
 Factor          :      '-'Factor                              {$$ = doNegative($2); };
 Factor	       	:	     IntLit									                {$$ = doIntLit(yytext); };
 Factor	       	:	     Ident									                {$$ = doRval(yytext); };
+Type            :      Int                                    {};
+Type            :      Void                                   {};
+Type            :      Bool                                   {};
+BoolVal         :      True                                   {$$ = doBoolAssign('t');};
+BoolVal         :      False                                  {$$ = doBoolAssign('f');};
 Id		          : 	   Ident									                {$$ = strdup(yytext);};
 
 %%

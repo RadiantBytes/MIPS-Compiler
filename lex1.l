@@ -18,7 +18,15 @@ digit [0-9]
 if															{return IF;}
 else														{return ELSE;}
 while														{return While;}
+for															{return For;}
 int															{return Int;}
+void 														{return Void;}
+Bool 														{return Bool;}
+Int 														{return ArrInt;}
+true     												{return True;}
+false 													{return False;}
+array														{return ArrAssign;}
+aint														{return AInt;}
 read														{return Read;}
 print														{return Write;}
 printline												{return WriteLn;}
@@ -43,11 +51,16 @@ pow															{return POW;}
 \!															{return '!';}
 \&\&														{return AND;}
 \|\|														{return OR;}
+\|															{return '|';}
 \;															{return ';';}
 \{															{return '{';}
 \}															{return '}';}
 \(															{return '(';}
 \)															{return ')';}
+\[															{return '[';}
+\]															{return ']';}
+\_															{return '_';}
+\#															{return '#';}
 
 [ ]															{}
 \t															{}
