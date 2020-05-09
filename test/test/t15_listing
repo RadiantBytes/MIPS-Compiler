@@ -1,0 +1,6 @@
+1. #include <stdio.h>
+2. int numbers[30];
+3. 
+4. int readNums() {
+               ^
+4. Illegal Character in YACC

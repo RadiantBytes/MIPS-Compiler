@@ -1,0 +1,24 @@
+1. #include <stdio.h>
+2. 
+3. 	int count;
+4. 	int i;
+5.     int j;
+6.     int temp;
+7. 	read(count);
+8. 	i = 0;
+9. 	while (i < count) {
+10. 
+11. 		i = i + 1;
+12. 	}
+13.     
+14.     i = 1;
+15.     while (i < count) {
+16.         j = i-1;
+17.  
+18.         i = i + 1;
+19.     }
+20. 	
+21.     printline();
+22. 
+23. 	printline();
+24. 

@@ -210,6 +210,7 @@ struct ExprRes *  doAdd(struct ExprRes * Res1, struct ExprRes * Res2)  {
 	return Res1;
 }
 
+
 struct ExprRes *  doSub(struct ExprRes * Res1, struct ExprRes * Res2)  {
 
 	int reg;
@@ -472,7 +473,7 @@ struct InstrSeq * doPrint(struct ExprRes * Expr) {
 
 struct InstrSeq * doReadIn(char *name)  {
 
-	printf("name : %s. ", name);
+	//printf("name : %s. ", name);
 	struct InstrSeq *code;
 	struct ExprRes *Expr = malloc(sizeof(struct ExprRes));
 
@@ -705,7 +706,9 @@ struct InstrSeq * doFunction(struct InstrSeq * ident, struct InstrSeq * params, 
 	return NULL;
 }
 
-struct InstrSeq * doDeclFunct(struct InstrSeq * seq, struct InstrSeq * seq2) {
+struct InstrSeq * doDeclFunct(struct InstrSeq * seq) {
+
+	struct InstrSeq * seq2;
 
 	char * temp;
 	temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
@@ -723,7 +726,6 @@ struct InstrSeq * doDeclFunct(struct InstrSeq * seq, struct InstrSeq * seq2) {
 	for(i; i < strlen(temp); i++) {
 		c = temp[i];
 
-
 		if (c == '(') {
 			openParensIndex = i;
 		}
@@ -735,10 +737,51 @@ struct InstrSeq * doDeclFunct(struct InstrSeq * seq, struct InstrSeq * seq2) {
 	}
 
 	// Grab name of array and size from the declaration line of code
-	strncpy(functName, temp+nameStartIndex+1, openParensIndex-6);
+	strncpy(functName, temp+nameStartIndex+1, openParensIndex-5);
+
+	seq2 = GenInstr(functName, NULL, NULL, NULL, NULL);
+	//AppendSeq(seq2, seq);
+
+	return seq2;
+}
+
+struct InstrSeq * doFunctCall(struct InstrSeq * seq) {
+	struct InstrSeq * seq2;
+
+	char * temp;
+	temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	strcpy(temp, getBuffer());
+
+	char * functName;
+	functName = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+
+	int openParensIndex;
+	int nameStartIndex;
+
+	char c;
+	int i = strlen(temp)-1;
+	for(i; i >= 0; i--) {
+		c = temp[i];
+
+		if (c == '(') {
+			openParensIndex = i;
+			printf("found open at %d", i);
+		}
+		if ((c == ' ') || (i == 0)) {
+			nameStartIndex = i;
+			printf("found start at %d", i);
+		}
 
 
-	AppendSeq(seq2, GenInstr(functName, NULL, NULL, NULL, NULL));
+	}
+
+	// Grab name of array and size from the declaration line of code
+	strncpy(functName, temp+nameStartIndex+1, openParensIndex-1);
+
+	printf("Funct is .%s.", functName);
+
+	seq2 = GenInstr(NULL, "j", functName, NULL, NULL);
 
 	return seq2;
 }

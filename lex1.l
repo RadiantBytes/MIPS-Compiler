@@ -36,6 +36,7 @@ pow															{return POW;}
 {digit}{digit}*									{return IntLit;}
 \=															{return '=';}
 \+															{return '+';}
+\+\+														{return Incr;}
 \*															{return '*';}
 \-															{return '-';}
 \/															{return '/';}
@@ -60,7 +61,16 @@ pow															{return POW;}
 \[															{return '[';}
 \]															{return ']';}
 \_															{return '_';}
-\#															{return '#';}
+\~															{return '~';}
+
+\#															{
+																 char * temp;
+																 temp = (char*)malloc(strlen(getBuffer()) * sizeof(char));
+																 strcpy(temp, getBuffer());
+															   if (temp[0] == '#') {
+																	setBuffer(getCurrentLineNum()+1);
+																 }
+																}
 
 [ ]															{}
 \t															{}

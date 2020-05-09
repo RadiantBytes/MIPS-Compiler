@@ -1,0 +1,15 @@
+int i;
+int j;
+int k;
+int m;
+i = 1;
+j = 2;
+k = 3;
+m = 4;
+print(i, j, k, m);
+printline();
+print(7);
+print(7);
+printspaces(8);
+print(i, j, k, m);
+printline();

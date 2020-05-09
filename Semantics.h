@@ -34,6 +34,7 @@ void doInitializeArray();
 extern struct InstrSeq *  doIndexAssign(struct ExprRes * Res2);
 extern struct ExprRes *  doAdd(struct ExprRes * Res1,  struct ExprRes * Res2);
 extern struct ExprRes *  doSub(struct ExprRes * Res1, struct ExprRes * Res2);
+extern struct ExprRes *  doPlusPlus(struct ExprRes * Res1);
 extern struct ExprRes *  doMult(struct ExprRes * Res1,  struct ExprRes * Res2);
 extern struct ExprRes *  doDiv(struct ExprRes * Res1, struct ExprRes * Res2);
 extern struct ExprRes *  doMod(struct ExprRes * Res1, struct ExprRes * Res2);
@@ -51,7 +52,8 @@ extern struct InstrSeq * doIfElse(struct BExprRes * bRes, struct InstrSeq * seq,
 extern struct InstrSeq * doWhileLoop(struct BExprRes * bRes, struct InstrSeq * seq);
 extern struct InstrSeq * doForLoop();
 extern struct InstrSeq * doFunction(struct InstrSeq * ident, struct InstrSeq * params, struct InstrSeq * stmtSeq, char *functName);
-extern struct InstrSeq * doDeclFunct(struct InstrSeq * seq, struct InstrSeq * seq2);
+extern struct InstrSeq * doDeclFunct(struct InstrSeq * seq);
+extern struct InstrSeq * doFunctCall(struct InstrSeq * seq);
 extern void	Finish(struct InstrSeq *Code);
 // Node *createString(char *varName, char *string);
 // void queueString(Node **link, Node *newNode);

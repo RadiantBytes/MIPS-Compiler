@@ -70,7 +70,8 @@ extern int yydebug;
     POW = 280,
     ArrAssign = 281,
     True = 282,
-    False = 283
+    False = 283,
+    Incr = 284
   };
 #endif
 /* Tokens.  */
@@ -100,6 +101,7 @@ extern int yydebug;
 #define ArrAssign 281
 #define True 282
 #define False 283
+#define Incr 284
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -115,7 +117,7 @@ union YYSTYPE
   struct BExprRes * BExprRes;
   struct Id *Id;
 
-#line 119 "y.tab.h" /* yacc.c:1909  */
+#line 121 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

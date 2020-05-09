@@ -1,0 +1,3 @@
+_int functAnother()
+int i;
+i = 3;

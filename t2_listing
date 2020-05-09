@@ -1,0 +1,22 @@
+1. #include <stdio.h>
+2. #include <math.h>
+3. 
+4.     int i;
+5.     int j;
+6.     int k;
+7.     int m;
+8.     i = 3;
+9.     j = 8;
+10.     k = 2;
+11.     m = i+j*k;
+12.     print(m);
+13.     printline();
+14.     m = j/i+k;
+15.     print(m);
+16.     printline();
+17.     m = k*j%i;
+18.     print(m);
+19.     printline();
+20.     m = pow(8, pow(2,3));
+21.     print(m);
+22.     printline();

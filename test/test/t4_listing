@@ -1,0 +1,18 @@
+1. #include <stdio.h>
+2. #include <math.h>
+3. 
+4.     int start;
+5.     int end;
+6.     int inc;
+7.     int current;
+8.     int c;
+9.     int k;
+10. 
+11.     read(start, end, inc);
+12.     current = start;
+13.     while (current <= end) {
+14.         c = (current - 32) * 5/9;
+15.         k = (current + 460) * 5/9;
+16.         print(current, c, k);
+17.         current = current + inc;
+18.     }

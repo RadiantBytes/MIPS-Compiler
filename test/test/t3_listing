@@ -1,0 +1,15 @@
+1. #include <stdio.h>
+2. #include <math.h>
+3. 
+4.     int i;
+5.     int j;
+6.     int k;
+7.     int m;
+8.     read(i, j, k, m);
+9.     print(i, j, k, m);
+10.     printline();
+11.     print(pow(i,j) * k + m);
+12.     print(m + k * pow(i,j));
+13.     printspaces(8);
+14.     print(i, j, k, m);
+15.     printline();
